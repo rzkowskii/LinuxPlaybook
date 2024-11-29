@@ -1,0 +1,78 @@
+{
+  "id": "command_history_shortcuts",
+  "name": "Command History & Shortcuts",
+  "description": "Learn how to use command history and keyboard shortcuts effectively",
+  "order": 2,
+  "flashcards": [
+    {
+      "id": 11,
+      "question": "How do you run the last command that started with \"ls\"?",
+      "answer": "Use !ls",
+      "example": "$ ls -l /etc\n... (output of the ls command)\n$ pwd\n/etc\n$ !ls\nls -l /etc\n... (executes ls -l /etc again)",
+      "category": "Command History"
+    },
+    {
+      "id": 12,
+      "question": "How do you re-run the 26th command in the history list?",
+      "answer": "Use !26",
+      "example": "$ history\n...\n  26  ping google.com\n...\n$ !26\nping google.com\n... (executes the ping command)",
+      "category": "Command History"
+    },
+    {
+      "id": 13,
+      "question": "What keyboard shortcut moves the cursor to the beginning of the command line?",
+      "answer": "Ctrl+A",
+      "example": "If you're typing a command and want to move the cursor to the start, press Ctrl+A.",
+      "category": "Keyboard Shortcuts"
+    },
+    {
+      "id": 14,
+      "question": "What keyboard shortcut moves the cursor to the end of the command line?",
+      "answer": "Ctrl+E",
+      "example": "While editing a command, press Ctrl+E to move the cursor to the end.",
+      "category": "Keyboard Shortcuts"
+    },
+    {
+      "id": 15,
+      "question": "What shortcut clears all text from the cursor to the beginning of the command line?",
+      "answer": "Ctrl+U",
+      "example": "Position the cursor where you want to start clearing, then press Ctrl+U.",
+      "category": "Keyboard Shortcuts"
+    },
+    {
+      "id": 16,
+      "question": "What shortcut clears all text from the cursor to the end of the command line?",
+      "answer": "Ctrl+K",
+      "example": "Place the cursor at the starting point, press Ctrl+K to delete to the end.",
+      "category": "Keyboard Shortcuts"
+    },
+    {
+      "id": 17,
+      "question": "What shortcut moves the cursor to the beginning of the previous word?",
+      "answer": "Alt+B or Esc then B",
+      "example": "While typing, press Alt+B to move back one word.",
+      "category": "Keyboard Shortcuts"
+    },
+    {
+      "id": 18,
+      "question": "What shortcut moves the cursor to the end of the next word?",
+      "answer": "Alt+F or Esc then F",
+      "example": "Press Alt+F to move forward one word.",
+      "category": "Keyboard Shortcuts"
+    },
+    {
+      "id": 19,
+      "question": "What shortcut searches your command history for a specific pattern?",
+      "answer": "Ctrl+R",
+      "example": "Press Ctrl+R, then start typing the pattern to search.\nThe terminal will display the matching command.",
+      "category": "Command History"
+    },
+    {
+      "id": 20,
+      "question": "How do you execute multiple commands on a single line?",
+      "answer": "Separate the commands with a semicolon ;.",
+      "example": "$ cd /var/log; ls; pwd\nChanges directory to /var/log\nLists files in /var/log\nDisplays the current directory",
+      "category": "Command Line Basics"
+    }
+  ]
+}

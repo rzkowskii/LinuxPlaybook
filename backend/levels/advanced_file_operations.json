@@ -1,0 +1,78 @@
+{
+  "id": "advanced_file_operations",
+  "name": "Advanced File Operations & Date Formatting",
+  "description": "Learn advanced file operations and date formatting commands",
+  "order": 3,
+  "flashcards": [
+    {
+      "id": 21,
+      "question": "How do you display the current time in 24-hour format?",
+      "answer": "Use date '+%H:%M' or date +%R",
+      "example": "$ date '+%H:%M'\n14:55\n$ date +%R\n14:55",
+      "category": "Date and Time"
+    },
+    {
+      "id": 22,
+      "question": "How do you display the current date in MM/DD/YYYY format?",
+      "answer": "Use date '+%m/%d/%Y'",
+      "example": "$ date '+%m/%d/%Y'\n10/18/2023",
+      "category": "Date and Time"
+    },
+    {
+      "id": 23,
+      "question": "How do you display the type of the /etc/passwd file?",
+      "answer": "Use file /etc/passwd",
+      "example": "$ file /etc/passwd\n/etc/passwd: ASCII text",
+      "category": "File Operations"
+    },
+    {
+      "id": 24,
+      "question": "What command do you use to display the type of the /bin/passwd file?",
+      "answer": "Use file /bin/passwd",
+      "example": "$ file /bin/passwd\n/bin/passwd: setuid ELF 64-bit LSB shared object, x86-64, version 1 (SYSV)...",
+      "category": "File Operations"
+    },
+    {
+      "id": 25,
+      "question": "How do you display the type of the /home directory?",
+      "answer": "Use file /home",
+      "example": "$ file /home\n/home: directory",
+      "category": "File Operations"
+    },
+    {
+      "id": 26,
+      "question": "How do you view the contents of multiple files?",
+      "answer": "Use cat followed by the file names.",
+      "example": "$ cat file1.txt file2.txt\n... (contents of file1.txt)\n... (contents of file2.txt)",
+      "category": "File Operations"
+    },
+    {
+      "id": 27,
+      "question": "How do you view the first 3 lines of the /etc/passwd file?",
+      "answer": "Use head -n 3 /etc/passwd",
+      "example": "$ head -n 3 /etc/passwd\nroot:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\nbin:x:2:2:bin:/bin:/usr/sbin/nologin",
+      "category": "File Operations"
+    },
+    {
+      "id": 28,
+      "question": "What command displays the last 10 lines of a file by default?",
+      "answer": "tail followed by the file name.",
+      "example": "$ tail /var/log/syslog\n... (last 10 lines of syslog)",
+      "category": "File Operations"
+    },
+    {
+      "id": 29,
+      "question": "How do you count lines, words, and characters in the /etc/passwd file?",
+      "answer": "Use wc /etc/passwd",
+      "example": "$ wc /etc/passwd\n  45   63 1935 /etc/passwd\nLines: 45\nWords: 63\nCharacters: 1935",
+      "category": "File Operations"
+    },
+    {
+      "id": 30,
+      "question": "What command counts the number of lines in /etc/passwd and /etc/group?",
+      "answer": "Use wc -l followed by the file names.",
+      "example": "$ wc -l /etc/passwd /etc/group\n  45 /etc/passwd\n  60 /etc/group\n 105 total",
+      "category": "File Operations"
+    }
+  ]
+}
