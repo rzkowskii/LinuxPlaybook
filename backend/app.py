@@ -11,6 +11,7 @@ CORS(app)
 
 # Flashcards data
 FLASHCARDS = [
+    # Original 1-20 flashcards
     {
         "id": 1,
         "question": "What command displays the current user's username in the terminal?",
@@ -150,6 +151,189 @@ FLASHCARDS = [
         "answer": "Separate the commands with a semicolon ;.",
         "example": "$ cd /var/log; ls; pwd\nChanges directory to /var/log\nLists files in /var/log\nDisplays the current directory",
         "category": "Command Line Basics"
+    },
+    # Additional flashcards 21-46
+    {
+        "id": 21,
+        "question": "How do you display the current time in 24-hour format?",
+        "answer": "Use date '+%H:%M' or date +%R",
+        "example": "$ date '+%H:%M'\n14:55\n$ date +%R\n14:55",
+        "category": "System Information"
+    },
+    {
+        "id": 22,
+        "question": "How do you display the current date in MM/DD/YYYY format?",
+        "answer": "Use date '+%m/%d/%Y'",
+        "example": "$ date '+%m/%d/%Y'\n10/18/2023",
+        "category": "System Information"
+    },
+    {
+        "id": 23,
+        "question": "How do you display the type of the /etc/passwd file?",
+        "answer": "Use file /etc/passwd",
+        "example": "$ file /etc/passwd\n/etc/passwd: ASCII text",
+        "category": "File Operations"
+    },
+    {
+        "id": 24,
+        "question": "What command do you use to display the type of the /bin/passwd file?",
+        "answer": "Use file /bin/passwd",
+        "example": "$ file /bin/passwd\n/bin/passwd: setuid ELF 64-bit LSB shared object, x86-64, version 1 (SYSV)...",
+        "category": "File Operations"
+    },
+    {
+        "id": 25,
+        "question": "How do you display the type of the /home directory?",
+        "answer": "Use file /home",
+        "example": "$ file /home\n/home: directory",
+        "category": "File Operations"
+    },
+    {
+        "id": 26,
+        "question": "How do you view the contents of multiple files?",
+        "answer": "Use cat followed by the file names.",
+        "example": "$ cat file1.txt file2.txt\n... (contents of file1.txt)\n... (contents of file2.txt)",
+        "category": "File Operations"
+    },
+    {
+        "id": 27,
+        "question": "How do you view the first 3 lines of the /etc/passwd file?",
+        "answer": "Use head -n 3 /etc/passwd",
+        "example": "$ head -n 3 /etc/passwd\nroot:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\nbin:x:2:2:bin:/bin:/usr/sbin/nologin",
+        "category": "File Operations"
+    },
+    {
+        "id": 28,
+        "question": "What command displays the last 10 lines of a file by default?",
+        "answer": "tail followed by the file name.",
+        "example": "$ tail /var/log/syslog\n... (last 10 lines of syslog)",
+        "category": "File Operations"
+    },
+    {
+        "id": 29,
+        "question": "How do you count lines, words, and characters in the /etc/passwd file?",
+        "answer": "Use wc /etc/passwd",
+        "example": "$ wc /etc/passwd\n  45   63 1935 /etc/passwd\nLines: 45\nWords: 63\nCharacters: 1935",
+        "category": "File Operations"
+    },
+    {
+        "id": 30,
+        "question": "What command counts the number of lines in /etc/passwd and /etc/group?",
+        "answer": "Use wc -l followed by the file names.",
+        "example": "$ wc -l /etc/passwd /etc/group\n  45 /etc/passwd\n  60 /etc/group\n 105 total",
+        "category": "File Operations"
+    },
+    {
+        "id": 31,
+        "question": "How do you count the number of characters in /etc/group and /etc/hosts?",
+        "answer": "Use wc -c followed by the file names.",
+        "example": "$ wc -c /etc/group /etc/hosts\n 2030 /etc/group\n  178 /etc/hosts\n 2208 total",
+        "category": "File Operations"
+    },
+    {
+        "id": 32,
+        "question": "What is the command to display the first 3 lines of two files using backslashes to continue the command?",
+        "answer": "Use head -n 3 followed by backslashes and file names.",
+        "example": "$ head -n 3 \\\n> /usr/share/dict/words \\\n> /usr/share/dict/linux.words\n==> /usr/share/dict/words <==\nA\na\naa\n\n==> /usr/share/dict/linux.words <==\n4th\nAbbas\nabbey",
+        "category": "File Operations"
+    },
+    {
+        "id": 33,
+        "question": "What is the function of the exclamation point ! character in the command line?",
+        "answer": "It is used to recall and execute commands from your history.",
+        "example": "!! repeats the last command.\n!n executes the command with history number n.\n!string executes the last command starting with string.",
+        "category": "Command History"
+    },
+    {
+        "id": 34,
+        "question": "How do you recall and execute the 20th command from the history list?",
+        "answer": "Use !20",
+        "example": "$ !20\n... (executes command number 20)",
+        "category": "Command History"
+    },
+    {
+        "id": 35,
+        "question": "What does the !number command do?",
+        "answer": "It executes the command corresponding to that number in the history list.",
+        "example": "$ !42\n... (executes command number 42 from history)",
+        "category": "Command History"
+    },
+    {
+        "id": 36,
+        "question": "What does the !string command do?",
+        "answer": "It executes the most recent command that begins with the specified string.",
+        "example": "$ !ls\n... (executes the most recent command starting with 'ls')",
+        "category": "Command History"
+    },
+    {
+        "id": 37,
+        "question": "How do you clear from the cursor to the beginning of the command line using a shortcut?",
+        "answer": "Press Ctrl+U",
+        "example": "Place the cursor where you want to start clearing, then press Ctrl+U.",
+        "category": "Keyboard Shortcuts"
+    },
+    {
+        "id": 38,
+        "question": "What shortcut searches the history list of commands for a pattern?",
+        "answer": "Ctrl+R",
+        "example": "Press Ctrl+R and type the search pattern.",
+        "category": "Keyboard Shortcuts"
+    },
+    {
+        "id": 39,
+        "question": "How do you jump to the beginning of the previous word on the command line?",
+        "answer": "Press Alt+B or Esc then B",
+        "example": "Use this to navigate back one word at a time while editing a command.",
+        "category": "Keyboard Shortcuts"
+    },
+    {
+        "id": 40,
+        "question": "What does Ctrl+A do in the command line?",
+        "answer": "Jumps to the beginning of the command line.",
+        "example": "Press Ctrl+A to move cursor to start of line.",
+        "category": "Keyboard Shortcuts"
+    },
+    {
+        "id": 41,
+        "question": "What does Ctrl+E do in the command line?",
+        "answer": "Jumps to the end of the command line.",
+        "example": "Press Ctrl+E to move cursor to end of line.",
+        "category": "Keyboard Shortcuts"
+    },
+    {
+        "id": 42,
+        "question": "What does Ctrl+U do in the command line?",
+        "answer": "Clears all text from the cursor to the beginning of the command line.",
+        "example": "Press Ctrl+U to delete from cursor to start of line.",
+        "category": "Keyboard Shortcuts"
+    },
+    {
+        "id": 43,
+        "question": "What does Ctrl+K do in the command line?",
+        "answer": "Clears all text from the cursor to the end of the command line.",
+        "example": "Press Ctrl+K to delete from cursor to end of line.",
+        "category": "Keyboard Shortcuts"
+    },
+    {
+        "id": 44,
+        "question": "What does Ctrl+LeftArrow do in the command line?",
+        "answer": "Moves the cursor backward one word.",
+        "example": "Note: Depending on the terminal, you might need to use Alt+B instead.",
+        "category": "Keyboard Shortcuts"
+    },
+    {
+        "id": 45,
+        "question": "What does Ctrl+RightArrow do in the command line?",
+        "answer": "Moves the cursor forward one word.",
+        "example": "Note: Depending on the terminal, you might need to use Alt+F instead.",
+        "category": "Keyboard Shortcuts"
+    },
+    {
+        "id": 46,
+        "question": "What does Ctrl+R do in the command line?",
+        "answer": "Initiates a reverse search in your command history for a pattern.",
+        "example": "Press Ctrl+R and type to search command history.",
+        "category": "Keyboard Shortcuts"
     }
 ]
 
