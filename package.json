@@ -1,0 +1,14 @@
+{
+  "name": "rhcsa-playbook",
+  "version": "1.0.0",
+  "description": "Interactive learning platform for Linux commands featuring flashcards and a live terminal interface",
+  "scripts": {
+    "install": "cd frontend && npm install && cd ../backend && python -m pip install -r requirements.txt",
+    "start:frontend": "cd frontend && npm run dev",
+    "start:backend": "cd backend && python app.py",
+    "dev": "concurrently \"npm run start:backend\" \"npm run start:frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
