@@ -48,12 +48,18 @@ command_state = {
     'new_password': None,
     'mock_files': MOCK_FILES.copy(),
     'last_ls_command': None,
+    'last_command': None,
     'command_history': [
         'ls -l',
         'cd /etc',
         'cat passwd',
         'history',
-        'ping google.com'
+        'ping google.com',
+        'wc -l /etc/passwd',
+        'date +%R',
+        'file /etc/passwd',
+        'head -n 3 /etc/passwd',
+        'tail -n 3 /etc/passwd'
     ]
 }
 
@@ -70,10 +76,27 @@ def execute_command():
             "simulated": True
         })
     
+    # Store last command for !! history expansion
+    if command != "!!":
+        command_state['last_command'] = command
+    
     # Split command into parts
     parts = command.split()
     base_command = parts[0] if parts else ''
     args = parts[1:] if len(parts) > 1 else []
+    
+    # Handle history expansion
+    if command == "!!":
+        if command_state['last_command']:
+            command = command_state['last_command']
+            parts = command.split()
+            base_command = parts[0]
+            args = parts[1:] if len(parts) > 1 else []
+        else:
+            return jsonify({
+                "output": "No commands in history",
+                "simulated": True
+            })
     
     # Handle date commands with format
     if command.startswith("date "):
@@ -188,12 +211,19 @@ def execute_command():
                 "success": True
             })
     elif command.startswith("head "):
-        if "-n 3" in command and "/etc/passwd" in command:
-            return jsonify({
-                "output": "root:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\nbin:x:2:2:bin:/bin:/usr/sbin/nologin",
-                "simulated": True,
-                "success": True
-            })
+        if "-n 3" in command:
+            if "/usr/share/dict/words" in command and "/usr/share/dict/linux.words" in command:
+                return jsonify({
+                    "output": "==> /usr/share/dict/words <==\nA\na\naa\n\n==> /usr/share/dict/linux.words <==\n4th\nAbbas\nabbey",
+                    "simulated": True,
+                    "success": True
+                })
+            elif "/etc/passwd" in command:
+                return jsonify({
+                    "output": "root:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\nbin:x:2:2:bin:/bin:/usr/sbin/nologin",
+                    "simulated": True,
+                    "success": True
+                })
         elif command.startswith("head /var/log/syslog"):
             return jsonify({
                 "output": "Oct 18 14:55:03 hostname systemd[1]: Started Session 1 of user john.\nOct 18 14:55:05 hostname sshd[1234]: Accepted password for john from 192.168.1.2 port 54321\n...",
@@ -223,6 +253,12 @@ def execute_command():
         elif command == "wc -l /etc/passwd /etc/group":
             return jsonify({
                 "output": "  45 /etc/passwd\n  60 /etc/group\n 105 total",
+                "simulated": True,
+                "success": True
+            })
+        elif command == "wc -c /etc/group /etc/hosts":
+            return jsonify({
+                "output": " 2030 /etc/group\n  178 /etc/hosts\n 2208 total",
                 "simulated": True,
                 "success": True
             })
