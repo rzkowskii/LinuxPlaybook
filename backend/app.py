@@ -22,79 +22,24 @@ MOCK_FILES = {
     'example.pdf': 'file'
 }
 
-# Flashcards data
-FLASHCARDS = [
-    {
-        "id": 1,
-        "question": "What command displays the current user's username in the terminal?",
-        "answer": "whoami",
-        "example": "$ whoami\njohn",
-        "category": "User Commands"
-    },
-    {
-        "id": 2,
-        "question": "How do you find the current date and time in the terminal?",
-        "answer": "Use the date command.",
-        "example": "$ date\nWed Oct 18 14:55:02 PDT 2023",
-        "category": "System Information"
-    },
-    {
-        "id": 3,
-        "question": "What command allows the current user to change their password?",
-        "answer": "passwd",
-        "example": "$ passwd\nChanging password for user john.\nCurrent password:\nNew password:\nRetype new password:\npasswd: all authentication tokens updated successfully.",
-        "category": "User Management"
-    },
-    {
-        "id": 4,
-        "question": "How do you list all files and directories in the current directory?",
-        "answer": "ls",
-        "example": "$ ls\nDocuments Downloads Pictures Desktop file1.txt file2.txt example.pdf",
-        "category": "File System"
-    },
-    {
-        "id": 5,
-        "question": "What command shows the current working directory?",
-        "answer": "pwd",
-        "example": "$ pwd\n/home/john",
-        "category": "File System"
-    },
-    {
-        "id": 6,
-        "question": "How do you create a new directory?",
-        "answer": "mkdir",
-        "example": "$ mkdir new_directory",
-        "category": "File System"
-    },
-    {
-        "id": 7,
-        "question": "What command removes a file?",
-        "answer": "rm",
-        "example": "$ rm file.txt",
-        "category": "File System"
-    },
-    {
-        "id": 8,
-        "question": "How do you remove a directory and its contents?",
-        "answer": "rm -r",
-        "example": "$ rm -r directory_name",
-        "category": "File System"
-    },
-    {
-        "id": 9,
-        "question": "What command copies files or directories?",
-        "answer": "cp",
-        "example": "$ cp source.txt destination.txt",
-        "category": "File System"
-    },
-    {
-        "id": 10,
-        "question": "How do you move or rename files and directories?",
-        "answer": "mv",
-        "example": "$ mv old_name.txt new_name.txt",
-        "category": "File System"
-    }
-]
+def load_levels():
+    """Load all level files from the levels directory"""
+    levels = []
+    levels_dir = os.path.join(os.path.dirname(__file__), 'levels')
+    for filename in os.listdir(levels_dir):
+        if filename.endswith('.json'):
+            with open(os.path.join(levels_dir, filename), 'r') as f:
+                level = json.load(f)
+                levels.append(level)
+    return sorted(levels, key=lambda x: x['order'])
+
+def get_all_flashcards():
+    """Get all flashcards from all levels"""
+    levels = load_levels()
+    flashcards = []
+    for level in levels:
+        flashcards.extend(level['flashcards'])
+    return flashcards
 
 # Command state
 command_state = {
@@ -126,12 +71,14 @@ def execute_command():
     if command == "whoami":
         return jsonify({
             "output": "john",
-            "simulated": False
+            "simulated": False,
+            "success": True
         })
     elif command == "date":
         return jsonify({
             "output": datetime.now().strftime("%c"),
-            "simulated": False
+            "simulated": False,
+            "success": True
         })
     elif command == "ls":
         files = ' '.join(sorted(command_state['mock_files'].keys()))
@@ -146,6 +93,58 @@ def execute_command():
             "simulated": True,
             "success": True
         })
+    elif command == "history":
+        return jsonify({
+            "output": "   1  ls -l\n   2  cd /etc\n   3  cat passwd\n   4  history",
+            "simulated": True,
+            "success": True
+        })
+    elif command.startswith("file "):
+        filename = command[5:]
+        if filename == "/bin/ls":
+            return jsonify({
+                "output": "/bin/ls: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked...",
+                "simulated": True,
+                "success": True
+            })
+    elif command.startswith("cat "):
+        filename = command[4:]
+        if filename == "/etc/passwd":
+            return jsonify({
+                "output": "root:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\n...",
+                "simulated": True,
+                "success": True
+            })
+    elif command.startswith("head "):
+        filename = command[5:]
+        if filename == "/var/log/syslog":
+            return jsonify({
+                "output": "Oct 18 14:55:03 hostname systemd[1]: Started Session 1 of user john.\nOct 18 14:55:05 hostname sshd[1234]: Accepted password for john from 192.168.1.2 port 54321\n...",
+                "simulated": True,
+                "success": True
+            })
+    elif command.startswith("tail "):
+        if "-n 3" in command and "/etc/passwd" in command:
+            return jsonify({
+                "output": "sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin\njohn:x:1001:1001:John Doe,,,:/home/john:/bin/bash",
+                "simulated": True,
+                "success": True
+            })
+    elif command.startswith("wc "):
+        filename = command[3:]
+        if filename == "/etc/hosts":
+            return jsonify({
+                "output": "  12   22  178 /etc/hosts\nLines: 12\nWords: 22\nCharacters: 178",
+                "simulated": True,
+                "success": True
+            })
+    elif command.startswith("echo "):
+        if "multi-line" in command:
+            return jsonify({
+                "output": "This is a multi-line command",
+                "simulated": True,
+                "success": True
+            })
     elif base_command == "mkdir" and len(args) == 1:
         dirname = args[0]
         command_state['mock_files'][dirname] = 'directory'
@@ -234,15 +233,21 @@ def execute_command():
         "simulated": True
     })
 
+@app.route('/api/levels', methods=['GET'])
+def get_levels():
+    """Return all levels"""
+    return jsonify(load_levels())
+
 @app.route('/api/flashcards', methods=['GET'])
 def get_flashcards():
     """Return all flashcards"""
-    return jsonify(FLASHCARDS)
+    return jsonify(get_all_flashcards())
 
 @app.route('/api/flashcards/<int:id>', methods=['GET'])
 def get_flashcard(id):
     """Return a specific flashcard"""
-    flashcard = next((card for card in FLASHCARDS if card["id"] == id), None)
+    flashcards = get_all_flashcards()
+    flashcard = next((card for card in flashcards if card["id"] == id), None)
     if flashcard is None:
         return jsonify({"error": "Flashcard not found"}), 404
     return jsonify(flashcard)
@@ -250,7 +255,8 @@ def get_flashcard(id):
 @app.route('/api/categories', methods=['GET'])
 def get_categories():
     """Return unique categories from flashcards"""
-    categories = list(set(card["category"] for card in FLASHCARDS))
+    flashcards = get_all_flashcards()
+    categories = list(set(card["category"] for card in flashcards))
     return jsonify(categories)
 
 if __name__ == '__main__':

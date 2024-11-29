@@ -11,14 +11,33 @@
         <!-- Flashcard Section -->
         <div class="space-y-6">
           <div class="bg-white rounded-lg shadow p-6">
-            <!-- Search and Filter -->
+            <!-- Level and Search Controls -->
             <div class="space-y-4 mb-6">
+              <!-- Level Selector -->
+              <select
+                v-model="selectedLevel"
+                class="level-filter"
+                @change="handleLevelChange"
+              >
+                <option value="">All Levels</option>
+                <option
+                  v-for="level in levels"
+                  :key="level.id"
+                  :value="level.id"
+                >
+                  {{ level.name }}
+                </option>
+              </select>
+
+              <!-- Search Bar -->
               <input
                 v-model="searchQuery"
                 type="text"
                 placeholder="Search flashcards..."
                 class="search-bar"
               />
+
+              <!-- Category Filter -->
               <select
                 v-model="selectedCategory"
                 class="category-filter"
@@ -94,11 +113,13 @@ const API_BASE_URL = 'http://localhost:5001'
 // State
 const searchQuery = ref('')
 const selectedCategory = ref('')
+const selectedLevel = ref('')
 const currentIndex = ref(0)
 const terminal = ref<HTMLElement | null>(null)
 const terminalInput = ref<HTMLTextAreaElement | null>(null)
 const xtermInstance = ref<Terminal | null>(null)
 const flashcards = ref<any[]>([])
+const levels = ref<any[]>([])
 const categories = ref<string[]>([])
 const currentCommand = ref('')
 const isPasswordInput = ref(false)
@@ -222,6 +243,11 @@ const handleInput = (event: Event) => {
   }
 }
 
+const handleLevelChange = () => {
+  currentIndex.value = 0
+  fetchFlashcards()
+}
+
 const initializeTerminal = () => {
   if (!terminal.value) return
 
@@ -253,6 +279,15 @@ const initializeTerminal = () => {
 
   // Focus terminal input
   focusTerminal()
+}
+
+const fetchLevels = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/api/levels`)
+    levels.value = response.data
+  } catch (error) {
+    console.error('Error fetching levels:', error)
+  }
 }
 
 const fetchFlashcards = async () => {
@@ -288,6 +323,7 @@ const previousCard = () => {
 // Lifecycle
 onMounted(() => {
   initializeTerminal()
+  fetchLevels()
   fetchFlashcards()
   fetchCategories()
   
@@ -347,5 +383,23 @@ onMounted(() => {
 
 .xterm-helper-textarea {
   left: 0 !important;
+}
+
+.level-filter,
+.search-bar,
+.category-filter {
+  @apply block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6;
+}
+
+.nav-controls {
+  @apply flex items-center justify-between mt-4;
+}
+
+.btn {
+  @apply px-4 py-2 rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+.btn-secondary {
+  @apply bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed;
 }
 </style>

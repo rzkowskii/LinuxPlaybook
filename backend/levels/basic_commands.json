@@ -1,0 +1,78 @@
+{
+  "id": "basic_commands",
+  "name": "Basic Commands",
+  "description": "Learn essential Linux commands for user interaction and file operations",
+  "order": 1,
+  "flashcards": [
+    {
+      "id": 1,
+      "question": "What command displays the current user's username in the terminal?",
+      "answer": "whoami",
+      "example": "$ whoami\njohn",
+      "category": "User Commands"
+    },
+    {
+      "id": 2,
+      "question": "How do you find the current date and time in the terminal?",
+      "answer": "Use the date command.",
+      "example": "$ date\nWed Oct 18 14:55:02 PDT 2023",
+      "category": "System Information"
+    },
+    {
+      "id": 3,
+      "question": "What command allows the current user to change their password?",
+      "answer": "passwd",
+      "example": "$ passwd\nChanging password for user john.\nCurrent password:\nNew password:\nRetype new password:",
+      "category": "User Management"
+    },
+    {
+      "id": 4,
+      "question": "Which command displays the actual type of a file by examining its contents?",
+      "answer": "file",
+      "example": "$ file /bin/ls\n/bin/ls: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked...",
+      "category": "File Operations"
+    },
+    {
+      "id": 5,
+      "question": "How do you view the contents of a file?",
+      "answer": "Use the cat command followed by the file path.",
+      "example": "$ cat /etc/passwd\nroot:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\n...",
+      "category": "File Operations"
+    },
+    {
+      "id": 6,
+      "question": "How do you view the first 10 lines of a file?",
+      "answer": "Use head followed by the file path.",
+      "example": "$ head /var/log/syslog\nOct 18 14:55:03 hostname systemd[1]: Started Session 1 of user john.\nOct 18 14:55:05 hostname sshd[1234]: Accepted password for john from 192.168.1.2 port 54321\n...",
+      "category": "File Operations"
+    },
+    {
+      "id": 7,
+      "question": "How do you view the last 3 lines of a file?",
+      "answer": "Use tail -n 3 followed by the file path.",
+      "example": "$ tail -n 3 /etc/passwd\nsshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin\njohn:x:1001:1001:John Doe,,,:/home/john:/bin/bash",
+      "category": "File Operations"
+    },
+    {
+      "id": 8,
+      "question": "What command counts lines, words, and characters in a file?",
+      "answer": "wc (word count)",
+      "example": "$ wc /etc/hosts\n  12   22  178 /etc/hosts\nLines: 12\nWords: 22\nCharacters: 178",
+      "category": "File Operations"
+    },
+    {
+      "id": 9,
+      "question": "How do you write a long command over multiple lines in the terminal?",
+      "answer": "Use a backslash \\ at the end of each line to continue the command.",
+      "example": "$ echo \"This is a \\\n> multi-line \\\n> command\"\nThis is a multi-line command",
+      "category": "Command Line Basics"
+    },
+    {
+      "id": 10,
+      "question": "How do you display your command history?",
+      "answer": "Use the history command.",
+      "example": "$ history\n   1  ls -l\n   2  cd /etc\n   3  cat passwd\n   4  history",
+      "category": "Command Line Basics"
+    }
+  ]
+}
