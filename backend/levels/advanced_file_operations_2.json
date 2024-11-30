@@ -1,0 +1,78 @@
+{
+  "id": "advanced_file_operations_2",
+  "name": "Advanced File Operations II",
+  "description": "Learn about directory operations, links, and advanced pattern matching",
+  "order": 9,
+  "flashcards": [
+    {
+      "id": 81,
+      "question": "What does the rmdir command do?",
+      "answer": "Removes empty directories.",
+      "example": "$ rmdir empty_directory/",
+      "category": "Directory Operations"
+    },
+    {
+      "id": 82,
+      "question": "How do you check if two files are hard linked?",
+      "answer": "Use ls -i to compare their inode numbers; if they match, they are hard linked.",
+      "example": "$ ls -i original_file.txt hardlink.txt\n1234567 original_file.txt\n1234567 hardlink.txt",
+      "category": "File Operations"
+    },
+    {
+      "id": 83,
+      "question": "What is a dangling symbolic link?",
+      "answer": "A symbolic link that points to a non-existent file or directory.",
+      "example": "$ ls -l broken_symlink.txt\nlrwxrwxrwx 1 user user 20 Oct 18 16:00 broken_symlink.txt -> /nonexistent/file.txt",
+      "category": "File Operations"
+    },
+    {
+      "id": 84,
+      "question": "What does the cd -P command do?",
+      "answer": "Changes to the physical directory, resolving symbolic links to their actual paths.",
+      "example": "$ cd -P /path/with/symlink\n# Navigates to the real directory, not the symbolic link.",
+      "category": "Directory Navigation"
+    },
+    {
+      "id": 85,
+      "question": "What does the pattern [abc...] match in pattern matching?",
+      "answer": "Any one character enclosed within the brackets.",
+      "example": "$ ls file[123].txt\n# Matches 'file1.txt', 'file2.txt', or 'file3.txt'.",
+      "category": "Pattern Matching"
+    },
+    {
+      "id": 86,
+      "question": "What does the pattern [!abc...] match in pattern matching?",
+      "answer": "Any one character not enclosed within the brackets.",
+      "example": "$ ls file[!123].txt\n# Matches files like 'file4.txt', 'fileA.txt', but not 'file1.txt', 'file2.txt', or 'file3.txt'.",
+      "category": "Pattern Matching"
+    },
+    {
+      "id": 87,
+      "question": "What does the pattern [[:alnum:]] match?",
+      "answer": "Any alphanumeric character (letters and digits).",
+      "example": "$ ls report_[[:alnum:]].pdf\n# Matches files like 'report_A.pdf', 'report_5.pdf'.",
+      "category": "Pattern Matching"
+    },
+    {
+      "id": 88,
+      "question": "What does the pattern [[:punct:]] match?",
+      "answer": "Any punctuation character.",
+      "example": "$ ls file[[:punct:]].txt\n# Matches 'file!.txt', 'file#.txt', 'file&.txt'.",
+      "category": "Pattern Matching"
+    },
+    {
+      "id": 89,
+      "question": "What does echo ~nonexistinguser expand to?",
+      "answer": "It remains as ~nonexistinguser because the user does not exist.",
+      "example": "$ echo ~nonexistinguser\n~nonexistinguser",
+      "category": "Shell Expansion"
+    },
+    {
+      "id": 90,
+      "question": "What happens when you try to rmdir a non-empty directory?",
+      "answer": "The command fails with an error indicating the directory is not empty.",
+      "example": "$ rmdir non_empty_dir/\nrmdir: failed to remove 'non_empty_dir/': Directory not empty",
+      "category": "Directory Operations"
+    }
+  ]
+}

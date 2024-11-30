@@ -1,0 +1,78 @@
+{
+  "id": "command_usage_and_man",
+  "name": "Command Usage & Manual Pages",
+  "description": "Learn about command usage patterns and manual page navigation",
+  "order": 10,
+  "flashcards": [
+    {
+      "id": 91,
+      "question": "What command updates the timestamp of a file without modifying its content?",
+      "answer": "touch",
+      "example": "$ touch existing_file.txt\n# Updates the modification and access times.",
+      "category": "File Operations"
+    },
+    {
+      "id": 92,
+      "question": "How do you move a file and display detailed output?",
+      "answer": "Use mv -v followed by the source and destination.",
+      "example": "$ mv -v oldname.txt newname.txt\nrenamed 'oldname.txt' -> 'newname.txt'",
+      "category": "File Operations"
+    },
+    {
+      "id": 93,
+      "question": "How do you create a hard link named newfile-hlink2.txt in /tmp pointing to newfile.txt?",
+      "answer": "Use ln followed by the source and target path.",
+      "example": "$ ln newfile.txt /tmp/newfile-hlink2.txt",
+      "category": "File Operations"
+    },
+    {
+      "id": 94,
+      "question": "How do you create a symbolic link named newfile-symlink.txt in /tmp pointing to newfile-link2.txt?",
+      "answer": "Use ln -s followed by the target and link path.",
+      "example": "$ ln -s /home/user/newfile-link2.txt /tmp/newfile-symlink.txt",
+      "category": "File Operations"
+    },
+    {
+      "id": 95,
+      "question": "How do you use tilde expansion to refer to the home directory of a user named user?",
+      "answer": "Use ~user",
+      "example": "$ echo ~user\n/home/user",
+      "category": "Shell Expansion"
+    },
+    {
+      "id": 96,
+      "question": "What does echo file{1..3}.txt expand to?",
+      "answer": "It expands to file1.txt file2.txt file3.txt.",
+      "example": "$ echo file{1..3}.txt\nfile1.txt file2.txt file3.txt",
+      "category": "Shell Expansion"
+    },
+    {
+      "id": 97,
+      "question": "What does echo ${USERNAME} do?",
+      "answer": "Displays the value of the USERNAME variable.",
+      "example": "$ echo ${USERNAME}\nuser",
+      "category": "Variables"
+    },
+    {
+      "id": 98,
+      "question": "How do you protect the dollar sign $ from being interpreted as a variable in a string?",
+      "answer": "Use a backslash \\ before the dollar sign.",
+      "example": "$ echo \\$HOME\n$HOME",
+      "category": "Shell Quoting"
+    },
+    {
+      "id": 99,
+      "question": "What does the command hostname -s return?",
+      "answer": "It returns the short hostname of the system (without the domain).",
+      "example": "$ hostname -s\nmycomputer",
+      "category": "System Information"
+    },
+    {
+      "id": 100,
+      "question": "In the man (manual) pages, what keyboard shortcut scrolls forward one full screen?",
+      "answer": "Press the Spacebar or PageDown.",
+      "example": "While viewing a man page, press the Spacebar to advance to the next screen of text.",
+      "category": "Manual Pages"
+    }
+  ]
+}
