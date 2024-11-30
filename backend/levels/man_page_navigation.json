@@ -1,0 +1,78 @@
+{
+  "id": "man_page_navigation",
+  "name": "Man Page Navigation",
+  "description": "Learn essential keyboard shortcuts for navigating manual pages",
+  "order": 11,
+  "flashcards": [
+    {
+      "id": 101,
+      "question": "How do you scroll backward one full screen in the man pages?",
+      "answer": "Press PageUp.",
+      "example": "To revisit the previous content in a man page, press PageUp.",
+      "category": "Manual Pages"
+    },
+    {
+      "id": 102,
+      "question": "What command scrolls forward one line in the man pages?",
+      "answer": "Press the DownArrow key.",
+      "example": "Use the DownArrow to move down one line at a time while reading.",
+      "category": "Manual Pages"
+    },
+    {
+      "id": 103,
+      "question": "How do you scroll backward one line in the man pages?",
+      "answer": "Press the UpArrow key.",
+      "example": "Press UpArrow to move up one line in the man page.",
+      "category": "Manual Pages"
+    },
+    {
+      "id": 104,
+      "question": "What keyboard shortcut scrolls forward half a screen in the man pages?",
+      "answer": "Press D (uppercase D).",
+      "example": "While viewing, press D to move forward by half a screen of text.",
+      "category": "Manual Pages"
+    },
+    {
+      "id": 105,
+      "question": "How do you scroll backward half a screen in the man pages?",
+      "answer": "Press U (uppercase U).",
+      "example": "Press U to move backward by half a screen.",
+      "category": "Manual Pages"
+    },
+    {
+      "id": 106,
+      "question": "How do you search forward for a specific string in a man page?",
+      "answer": "Type /string and press Enter, replacing string with your search term.",
+      "example": "To search for \"passwd\" in the man page:\n/passwd\nPress Enter to start the search.",
+      "category": "Manual Pages"
+    },
+    {
+      "id": 107,
+      "question": "What command repeats the previous search forward in a man page?",
+      "answer": "Press n.",
+      "example": "After an initial search, press n to find the next occurrence.",
+      "category": "Manual Pages"
+    },
+    {
+      "id": 108,
+      "question": "How do you repeat the previous search backward in a man page?",
+      "answer": "Press Shift+N (uppercase N).",
+      "example": "Press Shift+N to search for the previous occurrence of the term.",
+      "category": "Manual Pages"
+    },
+    {
+      "id": 109,
+      "question": "How do you go to the start of a man page?",
+      "answer": "Press g.",
+      "example": "At any point, press g to jump to the beginning.",
+      "category": "Manual Pages"
+    },
+    {
+      "id": 110,
+      "question": "What command goes to the end of a man page?",
+      "answer": "Press Shift+G (uppercase G).",
+      "example": "Press Shift+G to navigate directly to the end.",
+      "category": "Manual Pages"
+    }
+  ]
+}
