@@ -24,6 +24,9 @@ MOCK_FILES = {
     '.config': {'type': 'directory', 'size': 4096, 'perms': 'drwxr-xr-x', 'owner': 'user', 'group': 'user', 'date': 'Oct 18 09:00'}
 }
 
+# Mock current directory
+CURRENT_DIR = '/home/user'
+
 def load_levels():
     """Load all level files from the levels directory"""
     levels = []
@@ -49,6 +52,7 @@ command_state = {
     'current_password': None,
     'new_password': None,
     'mock_files': MOCK_FILES.copy(),
+    'current_dir': CURRENT_DIR,
     'last_ls_command': None,
     'last_command': None,
     'command_history': [
@@ -87,21 +91,132 @@ def execute_command():
     base_command = parts[0] if parts else ''
     args = parts[1:] if len(parts) > 1 else []
     
-    # Handle history expansion
-    if command == "!!":
-        if command_state['last_command']:
-            command = command_state['last_command']
-            parts = command.split()
-            base_command = parts[0]
-            args = parts[1:] if len(parts) > 1 else []
-        else:
+    # Handle cd command
+    if base_command == "cd":
+        if len(args) == 1:
+            command_state['current_dir'] = args[0]
             return jsonify({
-                "output": "No commands in history",
-                "simulated": True
+                "output": "",
+                "simulated": True,
+                "success": True
+            })
+    
+    # Handle touch command
+    elif base_command == "touch":
+        if len(args) == 1:
+            filename = args[0]
+            if filename not in command_state['mock_files']:
+                command_state['mock_files'][filename] = {
+                    'type': 'file',
+                    'size': 0,
+                    'perms': '-rw-r--r--',
+                    'owner': 'user',
+                    'group': 'user',
+                    'date': datetime.now().strftime("%b %d %H:%M")
+                }
+            else:
+                command_state['mock_files'][filename]['date'] = datetime.now().strftime("%b %d %H:%M")
+            return jsonify({
+                "output": "",
+                "simulated": True,
+                "success": True
+            })
+    
+    # Handle mkdir command
+    elif base_command == "mkdir":
+        if "-p" in args:
+            # Remove -p from args
+            args.remove("-p")
+            # Create all parent directories
+            for dirname in args:
+                parts = dirname.split('/')
+                current = ""
+                for part in parts:
+                    current = current + "/" + part if current else part
+                    if current not in command_state['mock_files']:
+                        command_state['mock_files'][current] = {
+                            'type': 'directory',
+                            'size': 4096,
+                            'perms': 'drwxr-xr-x',
+                            'owner': 'user',
+                            'group': 'user',
+                            'date': datetime.now().strftime("%b %d %H:%M")
+                        }
+        elif len(args) >= 1:
+            for dirname in args:
+                command_state['mock_files'][dirname] = {
+                    'type': 'directory',
+                    'size': 4096,
+                    'perms': 'drwxr-xr-x',
+                    'owner': 'user',
+                    'group': 'user',
+                    'date': datetime.now().strftime("%b %d %H:%M")
+                }
+        return jsonify({
+            "output": "",
+            "simulated": True,
+            "success": True
+        })
+    
+    # Handle cp command
+    elif base_command == "cp":
+        if "-r" in args:
+            args.remove("-r")
+        if len(args) == 2:
+            src, dst = args
+            if src in command_state['mock_files']:
+                command_state['mock_files'][dst] = command_state['mock_files'][src].copy()
+                command_state['mock_files'][dst]['date'] = datetime.now().strftime("%b %d %H:%M")
+            return jsonify({
+                "output": "",
+                "simulated": True,
+                "success": True
+            })
+    
+    # Handle mv command
+    elif base_command == "mv":
+        verbose = "-v" in args
+        if verbose:
+            args.remove("-v")
+        if len(args) == 2:
+            src, dst = args
+            if src in command_state['mock_files']:
+                command_state['mock_files'][dst] = command_state['mock_files'][src]
+                del command_state['mock_files'][src]
+                if verbose:
+                    return jsonify({
+                        "output": f"renamed '{src}' -> '{dst}'",
+                        "simulated": True,
+                        "success": True
+                    })
+            return jsonify({
+                "output": "",
+                "simulated": True,
+                "success": True
+            })
+    
+    # Handle rm command
+    elif base_command == "rm":
+        recursive = "-r" in args
+        if recursive:
+            args.remove("-r")
+        if len(args) >= 1:
+            for target in args:
+                if target in command_state['mock_files']:
+                    if command_state['mock_files'][target]['type'] == 'directory' and not recursive:
+                        return jsonify({
+                            "output": f"rm: cannot remove '{target}': Is a directory",
+                            "simulated": True
+                        })
+                    del command_state['mock_files'][target]
+            return jsonify({
+                "output": "",
+                "simulated": True,
+                "success": True
             })
     
     # Handle ls commands
-    if base_command == "ls":
+    elif base_command == "ls":
         if len(args) == 0:
             # Simple ls
             files = ' '.join(sorted(name for name in command_state['mock_files'].keys() if not name.startswith('.')))
@@ -138,6 +253,14 @@ def execute_command():
                     "success": True
                 })
     
+    # Handle pwd command
+    elif command == "pwd":
+        return jsonify({
+            "output": command_state['current_dir'],
+            "simulated": True,
+            "success": True
+        })
+    
     # Handle other commands
     elif command.startswith("date "):
         if command == "date '+%H:%M'" or command == "date +%R":
@@ -162,12 +285,6 @@ def execute_command():
         return jsonify({
             "output": datetime.now().strftime("%c"),
             "simulated": False,
-            "success": True
-        })
-    elif command == "pwd":
-        return jsonify({
-            "output": "/home/john",
-            "simulated": True,
             "success": True
         })
     elif command.startswith("file "):
@@ -288,59 +405,6 @@ def execute_command():
                 output.append("Displays the current directory")
         return jsonify({
             "output": "\n".join(output),
-            "simulated": True,
-            "success": True
-        })
-    elif base_command == "mkdir" and len(args) == 1:
-        dirname = args[0]
-        command_state['mock_files'][dirname] = {
-            'type': 'directory',
-            'size': 4096,
-            'perms': 'drwxr-xr-x',
-            'owner': 'user',
-            'group': 'user',
-            'date': datetime.now().strftime("%b %d %H:%M")
-        }
-        return jsonify({
-            "output": "",
-            "simulated": True,
-            "success": True
-        })
-    elif base_command == "rm":
-        if len(args) == 1:
-            filename = args[0]
-            if filename in command_state['mock_files']:
-                del command_state['mock_files'][filename]
-            return jsonify({
-                "output": "",
-                "simulated": True,
-                "success": True
-            })
-        elif len(args) == 2 and args[0] == "-r":
-            dirname = args[1]
-            if dirname in command_state['mock_files']:
-                del command_state['mock_files'][dirname]
-            return jsonify({
-                "output": "",
-                "simulated": True,
-                "success": True
-            })
-    elif base_command == "cp" and len(args) == 2:
-        src, dst = args
-        if src in command_state['mock_files']:
-            command_state['mock_files'][dst] = command_state['mock_files'][src].copy()
-        return jsonify({
-            "output": "",
-            "simulated": True,
-            "success": True
-        })
-    elif base_command == "mv" and len(args) == 2:
-        src, dst = args
-        if src in command_state['mock_files']:
-            command_state['mock_files'][dst] = command_state['mock_files'][src]
-            del command_state['mock_files'][src]
-        return jsonify({
-            "output": "",
             "simulated": True,
             "success": True
         })

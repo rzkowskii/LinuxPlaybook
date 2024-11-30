@@ -1,0 +1,78 @@
+{
+  "id": "file_manipulation",
+  "name": "File Manipulation Commands",
+  "description": "Learn essential commands for manipulating files and directories",
+  "order": 6,
+  "flashcards": [
+    {
+      "id": 51,
+      "question": "What does the cd command do?",
+      "answer": "Changes the current working directory to a specified directory.",
+      "example": "$ pwd\n/home/user\n$ cd /var/log\n$ pwd\n/var/log",
+      "category": "Directory Operations"
+    },
+    {
+      "id": 52,
+      "question": "What does the touch command do?",
+      "answer": "Updates the timestamp of a file to the current date and time or creates an empty file if it does not exist.",
+      "example": "# Update timestamp\n$ touch existing_file.txt\n\n# Create new empty file\n$ touch new_file.txt\n$ ls -l new_file.txt\n-rw-r--r-- 1 user user 0 Oct 18 14:00 new_file.txt",
+      "category": "File Operations"
+    },
+    {
+      "id": 53,
+      "question": "What command creates one or more directories or subdirectories?",
+      "answer": "mkdir (make directory)",
+      "example": "$ mkdir ProjectX\n# Creates a directory named 'ProjectX' in the current directory.",
+      "category": "Directory Operations"
+    },
+    {
+      "id": 54,
+      "question": "What option with mkdir creates any missing parent directories?",
+      "answer": "mkdir -p",
+      "example": "$ mkdir -p ProjectX/Reports/2023/October\n# Creates the entire directory path, including any missing parent directories.",
+      "category": "Directory Operations"
+    },
+    {
+      "id": 55,
+      "question": "How do you copy a file in the command line?",
+      "answer": "Use the cp command followed by the source file and the destination.",
+      "example": "$ cp source.txt destination.txt\n# Copies 'source.txt' to 'destination.txt'.",
+      "category": "File Operations"
+    },
+    {
+      "id": 56,
+      "question": "What option with cp copies directories and their contents recursively?",
+      "answer": "cp -r",
+      "example": "$ cp -r Thesis ProjectX\n# Copies the 'Thesis' directory and its contents into 'ProjectX'.",
+      "category": "File Operations"
+    },
+    {
+      "id": 57,
+      "question": "How do you move or rename a file in the command line?",
+      "answer": "Use the mv command followed by the source and the destination.",
+      "example": "# Rename a file\n$ mv oldname.txt newname.txt\n\n# Move a file to a different directory\n$ mv file.txt /home/user/Documents/",
+      "category": "File Operations"
+    },
+    {
+      "id": 58,
+      "question": "What option with mv displays a detailed output of the command operations?",
+      "answer": "mv -v (verbose)",
+      "example": "$ mv -v oldname.txt newname.txt\nrenamed 'oldname.txt' -> 'newname.txt'",
+      "category": "File Operations"
+    },
+    {
+      "id": 59,
+      "question": "How do you remove a file in the command line?",
+      "answer": "Use the rm command followed by the file name.",
+      "example": "$ rm unwanted_file.txt",
+      "category": "File Operations"
+    },
+    {
+      "id": 60,
+      "question": "What option with rm removes directories and their contents?",
+      "answer": "rm -r (recursive)",
+      "example": "$ rm -r obsolete_directory/\n# Removes the directory and all its contents.",
+      "category": "File Operations"
+    }
+  ]
+}
