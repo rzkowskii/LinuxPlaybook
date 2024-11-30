@@ -1,0 +1,78 @@
+{
+  "id": "keyboard_shortcuts_and_ls",
+  "name": "Keyboard Shortcuts & Directory Listing",
+  "description": "Learn essential keyboard shortcuts and directory listing commands",
+  "order": 5,
+  "flashcards": [
+    {
+      "id": 41,
+      "question": "What does Ctrl+E do in the command line?",
+      "answer": "Jumps to the end of the command line.",
+      "example": "Press Ctrl+E to move the cursor to the end of the line.",
+      "category": "Keyboard Shortcuts"
+    },
+    {
+      "id": 42,
+      "question": "What does Ctrl+U do in the command line?",
+      "answer": "Clears all text from the cursor to the beginning of the command line.",
+      "example": "Position the cursor where you want to start clearing, then press Ctrl+U.",
+      "category": "Keyboard Shortcuts"
+    },
+    {
+      "id": 43,
+      "question": "What does Ctrl+K do in the command line?",
+      "answer": "Clears all text from the cursor to the end of the command line.",
+      "example": "Place the cursor at the starting point, press Ctrl+K to delete to the end.",
+      "category": "Keyboard Shortcuts"
+    },
+    {
+      "id": 44,
+      "question": "What does Ctrl+LeftArrow do in the command line?",
+      "answer": "Moves the cursor backward one word.\n\nNote: Depending on the terminal, you might need to use Alt+B instead.",
+      "example": "Press Ctrl+LeftArrow to move back one word at a time.",
+      "category": "Keyboard Shortcuts"
+    },
+    {
+      "id": 45,
+      "question": "What does Ctrl+RightArrow do in the command line?",
+      "answer": "Moves the cursor forward one word.\n\nNote: Depending on the terminal, you might need to use Alt+F instead.",
+      "example": "Press Ctrl+RightArrow to move forward one word at a time.",
+      "category": "Keyboard Shortcuts"
+    },
+    {
+      "id": 46,
+      "question": "What does Ctrl+R do in the command line?",
+      "answer": "Initiates a reverse search in your command history for a pattern.",
+      "example": "Press Ctrl+R and start typing to search through command history.",
+      "category": "Keyboard Shortcuts"
+    },
+    {
+      "id": 47,
+      "question": "What command displays the full path of the current working directory?",
+      "answer": "pwd (print working directory)",
+      "example": "$ pwd\n/home/user",
+      "category": "Directory Operations"
+    },
+    {
+      "id": 48,
+      "question": "How do you list the contents of a specified directory?",
+      "answer": "Use the ls command followed by the directory path.",
+      "example": "$ ls /etc\napache2   hostname   passwd   ssh   ...",
+      "category": "Directory Operations"
+    },
+    {
+      "id": 49,
+      "question": "What option with ls lists all files, including hidden files?",
+      "answer": "ls -a",
+      "example": "$ ls -a\n.             .bash_history  Documents   Pictures\n..            .bashrc        Downloads   .profile\nFiles starting with a dot . are considered hidden.",
+      "category": "Directory Operations"
+    },
+    {
+      "id": 50,
+      "question": "What does the command ls -l do?",
+      "answer": "It lists directory contents in long listing format, showing detailed information about each file or directory.",
+      "example": "$ ls -l\ntotal 64\ndrwxr-xr-x 2 user user 4096 Oct 18 10:20 Documents\n-rw-r--r-- 1 user user  512 Oct 18 09:15 notes.txt\nDetails include permissions, number of links, owner, group, size, modification date, and name.",
+      "category": "Directory Operations"
+    }
+  ]
+}

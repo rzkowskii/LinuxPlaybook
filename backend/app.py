@@ -13,13 +13,15 @@ CORS(app)
 
 # Mock file system data
 MOCK_FILES = {
-    'Documents': 'directory',
-    'Downloads': 'directory',
-    'Pictures': 'directory',
-    'Desktop': 'directory',
-    'file1.txt': 'file',
-    'file2.txt': 'file',
-    'example.pdf': 'file'
+    'Documents': {'type': 'directory', 'size': 4096, 'perms': 'drwxr-xr-x', 'owner': 'user', 'group': 'user', 'date': 'Oct 18 10:20'},
+    'Downloads': {'type': 'directory', 'size': 4096, 'perms': 'drwxr-xr-x', 'owner': 'user', 'group': 'user', 'date': 'Oct 18 10:15'},
+    'Pictures': {'type': 'directory', 'size': 4096, 'perms': 'drwxr-xr-x', 'owner': 'user', 'group': 'user', 'date': 'Oct 18 10:10'},
+    'Desktop': {'type': 'directory', 'size': 4096, 'perms': 'drwxr-xr-x', 'owner': 'user', 'group': 'user', 'date': 'Oct 18 10:05'},
+    'file1.txt': {'type': 'file', 'size': 512, 'perms': '-rw-r--r--', 'owner': 'user', 'group': 'user', 'date': 'Oct 18 09:20'},
+    'file2.txt': {'type': 'file', 'size': 1024, 'perms': '-rw-r--r--', 'owner': 'user', 'group': 'user', 'date': 'Oct 18 09:15'},
+    'example.pdf': {'type': 'file', 'size': 2048, 'perms': '-rw-r--r--', 'owner': 'user', 'group': 'user', 'date': 'Oct 18 09:10'},
+    '.hidden1': {'type': 'file', 'size': 128, 'perms': '-rw-r--r--', 'owner': 'user', 'group': 'user', 'date': 'Oct 18 09:05'},
+    '.config': {'type': 'directory', 'size': 4096, 'perms': 'drwxr-xr-x', 'owner': 'user', 'group': 'user', 'date': 'Oct 18 09:00'}
 }
 
 def load_levels():
@@ -98,8 +100,46 @@ def execute_command():
                 "simulated": True
             })
     
-    # Handle date commands with format
-    if command.startswith("date "):
+    # Handle ls commands
+    if base_command == "ls":
+        if len(args) == 0:
+            # Simple ls
+            files = ' '.join(sorted(name for name in command_state['mock_files'].keys() if not name.startswith('.')))
+            return jsonify({
+                "output": files,
+                "simulated": True,
+                "success": True
+            })
+        elif "-a" in args:
+            # ls -a (show hidden files)
+            files = ' '.join(sorted(command_state['mock_files'].keys()))
+            return jsonify({
+                "output": files,
+                "simulated": True,
+                "success": True
+            })
+        elif "-l" in args:
+            # ls -l (long format)
+            output = "total 64\n"
+            for name, info in sorted(command_state['mock_files'].items()):
+                if not name.startswith('.'):  # Skip hidden files unless -a is present
+                    output += f"{info['perms']} 1 {info['owner']} {info['group']} {info['size']} {info['date']} {name}\n"
+            return jsonify({
+                "output": output.rstrip(),
+                "simulated": True,
+                "success": True
+            })
+        elif len(args) == 1 and not args[0].startswith('-'):
+            # ls with directory path
+            if args[0] == "/etc":
+                return jsonify({
+                    "output": "apache2   hostname   passwd   ssh   ...",
+                    "simulated": True,
+                    "success": True
+                })
+    
+    # Handle other commands
+    elif command.startswith("date "):
         if command == "date '+%H:%M'" or command == "date +%R":
             return jsonify({
                 "output": datetime.now().strftime("%H:%M"),
@@ -112,7 +152,6 @@ def execute_command():
                 "simulated": True,
                 "success": True
             })
-    # Handle basic commands
     elif command == "whoami":
         return jsonify({
             "output": "john",
@@ -123,45 +162,6 @@ def execute_command():
         return jsonify({
             "output": datetime.now().strftime("%c"),
             "simulated": False,
-            "success": True
-        })
-    elif command == "ls":
-        command_state['last_ls_command'] = command
-        files = ' '.join(sorted(command_state['mock_files'].keys()))
-        return jsonify({
-            "output": files,
-            "simulated": True,
-            "success": True
-        })
-    elif command.startswith("ls "):
-        command_state['last_ls_command'] = command
-        return jsonify({
-            "output": "... (output of the ls command)",
-            "simulated": True,
-            "success": True
-        })
-    elif command == "!ls" and command_state['last_ls_command']:
-        return jsonify({
-            "output": f"{command_state['last_ls_command']}\n... (executes {command_state['last_ls_command']} again)",
-            "simulated": True,
-            "success": True
-        })
-    elif command.startswith("!") and command[1:].isdigit():
-        cmd_num = int(command[1:])
-        if 1 <= cmd_num <= len(command_state['command_history']):
-            hist_cmd = command_state['command_history'][cmd_num - 1]
-            return jsonify({
-                "output": f"{hist_cmd}\n... (executes the {hist_cmd} command)",
-                "simulated": True,
-                "success": True
-            })
-    elif command == "history":
-        output = ""
-        for i, cmd in enumerate(command_state['command_history'], 1):
-            output += f"  {i}  {cmd}\n"
-        return jsonify({
-            "output": output.rstrip(),
-            "simulated": True,
             "success": True
         })
     elif command == "pwd":
@@ -293,7 +293,14 @@ def execute_command():
         })
     elif base_command == "mkdir" and len(args) == 1:
         dirname = args[0]
-        command_state['mock_files'][dirname] = 'directory'
+        command_state['mock_files'][dirname] = {
+            'type': 'directory',
+            'size': 4096,
+            'perms': 'drwxr-xr-x',
+            'owner': 'user',
+            'group': 'user',
+            'date': datetime.now().strftime("%b %d %H:%M")
+        }
         return jsonify({
             "output": "",
             "simulated": True,
@@ -321,7 +328,7 @@ def execute_command():
     elif base_command == "cp" and len(args) == 2:
         src, dst = args
         if src in command_state['mock_files']:
-            command_state['mock_files'][dst] = command_state['mock_files'][src]
+            command_state['mock_files'][dst] = command_state['mock_files'][src].copy()
         return jsonify({
             "output": "",
             "simulated": True,
