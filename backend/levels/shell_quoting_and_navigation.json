@@ -1,0 +1,78 @@
+{
+  "id": "shell_quoting_and_navigation",
+  "name": "Shell Quoting & Directory Navigation",
+  "description": "Learn about shell quoting, escaping, and directory navigation",
+  "order": 8,
+  "flashcards": [
+    {
+      "id": 71,
+      "question": "What does the backslash \\ do in command-line arguments?",
+      "answer": "It protects the following character from shell expansion (escaping).",
+      "example": "$ echo \\$HOME\n$HOME\n\n$ echo \"This is a backslash: \\\\\"\nThis is a backslash: \\",
+      "category": "Shell Quoting"
+    },
+    {
+      "id": 72,
+      "question": "How do single quotation marks affect shell expansion?",
+      "answer": "They prevent all shell expansion within the quotes.",
+      "example": "$ echo '$HOME'\n$HOME\n\n$ echo 'Today is $(date +%A)'\nToday is $(date +%A)",
+      "category": "Shell Quoting"
+    },
+    {
+      "id": 73,
+      "question": "How do double quotation marks affect shell expansion?",
+      "answer": "They prevent most shell expansion except for variable and command substitution.",
+      "example": "$ echo \"$HOME\"\n/home/user\n\n$ echo \"Today is $(date +%A)\"\nToday is Wednesday",
+      "category": "Shell Quoting"
+    },
+    {
+      "id": 74,
+      "question": "What does the command cd - do?",
+      "answer": "Changes to the previous working directory.",
+      "example": "$ pwd\n/home/user\n$ cd /var/log\n$ pwd\n/var/log\n$ cd -\n$ pwd\n/home/user",
+      "category": "Directory Navigation"
+    },
+    {
+      "id": 75,
+      "question": "What does the ls -R command do?",
+      "answer": "Lists directory contents recursively, including all subdirectories.",
+      "example": "$ ls -R\n.:\nDocuments  Downloads\n\n./Documents:\nresume.docx  report.pdf\n\n./Downloads:\nsong.mp3  video.mp4",
+      "category": "Directory Listing"
+    },
+    {
+      "id": 76,
+      "question": "How do you change to the parent directory?",
+      "answer": "Use cd ..",
+      "example": "$ pwd\n/home/user/Documents\n$ cd ..\n$ pwd\n/home/user",
+      "category": "Directory Navigation"
+    },
+    {
+      "id": 77,
+      "question": "What does the command cd . do?",
+      "answer": "It specifies the current directory; effectively, it does nothing.",
+      "example": "$ pwd\n/home/user\n$ cd .\n$ pwd\n/home/user",
+      "category": "Directory Navigation"
+    },
+    {
+      "id": 78,
+      "question": "What does the command cd ~ do?",
+      "answer": "Changes to the current user's home directory.",
+      "example": "$ pwd\n/var/log\n$ cd ~\n$ pwd\n/home/user",
+      "category": "Directory Navigation"
+    },
+    {
+      "id": 79,
+      "question": "What does the command cd without arguments do?",
+      "answer": "Changes to the current user's home directory (same as cd ~).",
+      "example": "$ pwd\n/etc\n$ cd\n$ pwd\n/home/user",
+      "category": "Directory Navigation"
+    },
+    {
+      "id": 80,
+      "question": "What does the command cd ~username do?",
+      "answer": "Changes to the specified user's home directory.",
+      "example": "$ cd ~root\n$ pwd\n/root",
+      "category": "Directory Navigation"
+    }
+  ]
+}

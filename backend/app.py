@@ -6,6 +6,7 @@ from datetime import datetime
 import json
 import glob
 import re
+import shlex
 
 # Load environment variables
 load_dotenv()
@@ -37,8 +38,32 @@ MOCK_ENV = {
     'PATH': '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin',
     'SHELL': '/bin/bash',
     'PWD': '/home/user',
-    'TERM': 'xterm-256color'
+    'TERM': 'xterm-256color',
+    'OLDPWD': '/var/log'  # For cd - command
 }
+
+def get_home_dir(username=None):
+    """Get home directory for a user"""
+    if username == 'root':
+        return '/root'
+    elif username:
+        return f'/home/{username}'
+    return MOCK_ENV['HOME']
+
+def list_directory_recursive(path='.'):
+    """Generate recursive directory listing"""
+    output = []
+    output.append(f"{path}:")
+    files = [name for name in command_state['mock_files'].keys() if not name.startswith('.')]
+    output.append(' '.join(sorted(files)))
+    
+    # Add subdirectories
+    for name, info in command_state['mock_files'].items():
+        if info['type'] == 'directory' and not name.startswith('.'):
+            output.append(f"\n./{name}:")
+            output.append("example_file1.txt  example_file2.txt")
+    
+    return '\n'.join(output)
 
 def match_pattern(pattern, files):
     """Match files against a shell pattern"""
@@ -87,6 +112,7 @@ command_state = {
     'new_password': None,
     'mock_files': MOCK_FILES.copy(),
     'current_dir': '/home/user',
+    'previous_dir': '/var/log',  # For cd - command
     'last_ls_command': None,
     'last_command': None,
     'command_history': [
@@ -117,12 +143,104 @@ def execute_command():
         command_state['last_command'] = command
     
     # Split command into parts
-    parts = command.split()
+    try:
+        parts = shlex.split(command)  # Handles quotes properly
+    except ValueError:
+        # Handle unclosed quotes
+        return jsonify({
+            "output": "Syntax error: Unclosed quote",
+            "simulated": True
+        })
+    
     base_command = parts[0] if parts else ''
     args = parts[1:] if len(parts) > 1 else []
     
+    # Handle cd commands
+    if base_command == "cd":
+        old_dir = command_state['current_dir']
+        if len(args) == 0 or args[0] == "~":
+            command_state['current_dir'] = get_home_dir()
+        elif args[0] == "-":
+            command_state['current_dir'] = command_state['previous_dir']
+            command_state['previous_dir'] = old_dir
+            return jsonify({
+                "output": command_state['current_dir'],
+                "simulated": True,
+                "success": True
+            })
+        elif args[0] == "..":
+            command_state['current_dir'] = os.path.dirname(command_state['current_dir'])
+        elif args[0] == ".":
+            pass  # Stay in current directory
+        elif args[0].startswith("~"):
+            username = args[0][1:] or None
+            command_state['current_dir'] = get_home_dir(username)
+        else:
+            command_state['current_dir'] = args[0]
+        command_state['previous_dir'] = old_dir
+        return jsonify({
+            "output": "",
+            "simulated": True,
+            "success": True
+        })
+    
+    # Handle echo with quotes
+    elif base_command == "echo":
+        if len(args) == 1:
+            arg = args[0]
+            if arg.startswith('\\'):
+                # Handle escaped characters
+                return jsonify({
+                    "output": arg[1:],
+                    "simulated": True,
+                    "success": True
+                })
+            elif arg.startswith('$'):
+                # Variable expansion
+                var_name = arg[1:].strip('{}')
+                if var_name in command_state['env_vars']:
+                    return jsonify({
+                        "output": command_state['env_vars'][var_name],
+                        "simulated": True,
+                        "success": True
+                    })
+            elif arg.startswith('~'):
+                # Tilde expansion
+                user = arg[1:] or 'user'
+                home_dir = '/root' if user == 'root' else f'/home/{user}'
+                return jsonify({
+                    "output": home_dir,
+                    "simulated": True,
+                    "success": True
+                })
+            elif arg.startswith('$(') and arg.endswith(')'):
+                # Command substitution
+                inner_command = arg[2:-1]
+                if inner_command == 'date +%A':
+                    return jsonify({
+                        "output": datetime.now().strftime("%A"),
+                        "simulated": True,
+                        "success": True
+                    })
+            else:
+                # Regular echo
+                return jsonify({
+                    "output": arg,
+                    "simulated": True,
+                    "success": True
+                })
+    
+    # Handle ls -R command
+    elif base_command == "ls" and "-R" in args:
+        output = list_directory_recursive()
+        return jsonify({
+            "output": output,
+            "simulated": True,
+            "success": True
+        })
+    
     # Handle pattern matching commands
-    if base_command == "ls" and any('*' in arg or '?' in arg or '[' in arg for arg in args):
+    elif base_command == "ls" and any('*' in arg or '?' in arg or '[' in arg for arg in args):
         matched_files = []
         for pattern in args:
             matched = match_pattern(pattern, command_state['mock_files'].keys())
@@ -133,186 +251,7 @@ def execute_command():
             "success": True
         })
     
-    # Handle brace expansion
-    elif base_command == "echo" and any('{' in arg and '}' in arg for arg in args):
-        expanded = []
-        for arg in args:
-            if '{' in arg and '}' in arg:
-                expanded.extend(expand_brace(arg))
-            else:
-                expanded.append(arg)
-        return jsonify({
-            "output": ' '.join(expanded),
-            "simulated": True,
-            "success": True
-        })
-    
-    # Handle variable operations
-    elif base_command == "export":
-        if len(args) == 1 and '=' in args[0]:
-            var_name, var_value = args[0].split('=', 1)
-            command_state['env_vars'][var_name] = var_value.strip('"')
-            return jsonify({
-                "output": "",
-                "simulated": True,
-                "success": True
-            })
-    
-    elif base_command == "echo":
-        if len(args) == 1:
-            if args[0].startswith('$'):
-                # Variable expansion
-                var_name = args[0][1:].strip('{}')
-                if var_name in command_state['env_vars']:
-                    return jsonify({
-                        "output": command_state['env_vars'][var_name],
-                        "simulated": True,
-                        "success": True
-                    })
-            elif args[0].startswith('~'):
-                # Tilde expansion
-                user = args[0][1:] or 'user'
-                home_dir = '/root' if user == 'root' else f'/home/{user}'
-                return jsonify({
-                    "output": home_dir,
-                    "simulated": True,
-                    "success": True
-                })
-            elif args[0].startswith('$(') and args[0].endswith(')'):
-                # Command substitution
-                inner_command = args[0][2:-1]
-                if inner_command == 'date +%A':
-                    return jsonify({
-                        "output": datetime.now().strftime("%A"),
-                        "simulated": True,
-                        "success": True
-                    })
-    
-    # Handle cd command
-    elif base_command == "cd":
-        if len(args) == 1:
-            command_state['current_dir'] = args[0]
-            return jsonify({
-                "output": "",
-                "simulated": True,
-                "success": True
-            })
-    
-    # Handle touch command
-    elif base_command == "touch":
-        if len(args) == 1:
-            filename = args[0]
-            if filename not in command_state['mock_files']:
-                command_state['mock_files'][filename] = {
-                    'type': 'file',
-                    'size': 0,
-                    'perms': '-rw-r--r--',
-                    'owner': 'user',
-                    'group': 'user',
-                    'date': datetime.now().strftime("%b %d %H:%M")
-                }
-            else:
-                command_state['mock_files'][filename]['date'] = datetime.now().strftime("%b %d %H:%M")
-            return jsonify({
-                "output": "",
-                "simulated": True,
-                "success": True
-            })
-    
-    # Handle mkdir command
-    elif base_command == "mkdir":
-        if "-p" in args:
-            # Remove -p from args
-            args.remove("-p")
-            # Create all parent directories
-            for dirname in args:
-                parts = dirname.split('/')
-                current = ""
-                for part in parts:
-                    current = current + "/" + part if current else part
-                    if current not in command_state['mock_files']:
-                        command_state['mock_files'][current] = {
-                            'type': 'directory',
-                            'size': 4096,
-                            'perms': 'drwxr-xr-x',
-                            'owner': 'user',
-                            'group': 'user',
-                            'date': datetime.now().strftime("%b %d %H:%M")
-                        }
-        elif len(args) >= 1:
-            for dirname in args:
-                command_state['mock_files'][dirname] = {
-                    'type': 'directory',
-                    'size': 4096,
-                    'perms': 'drwxr-xr-x',
-                    'owner': 'user',
-                    'group': 'user',
-                    'date': datetime.now().strftime("%b %d %H:%M")
-                }
-        return jsonify({
-            "output": "",
-            "simulated": True,
-            "success": True
-        })
-    
-    # Handle cp command
-    elif base_command == "cp":
-        if "-r" in args:
-            args.remove("-r")
-        if len(args) == 2:
-            src, dst = args
-            if src in command_state['mock_files']:
-                command_state['mock_files'][dst] = command_state['mock_files'][src].copy()
-                command_state['mock_files'][dst]['date'] = datetime.now().strftime("%b %d %H:%M")
-            return jsonify({
-                "output": "",
-                "simulated": True,
-                "success": True
-            })
-    
-    # Handle mv command
-    elif base_command == "mv":
-        verbose = "-v" in args
-        if verbose:
-            args.remove("-v")
-        if len(args) == 2:
-            src, dst = args
-            if src in command_state['mock_files']:
-                command_state['mock_files'][dst] = command_state['mock_files'][src]
-                del command_state['mock_files'][src]
-                if verbose:
-                    return jsonify({
-                        "output": f"renamed '{src}' -> '{dst}'",
-                        "simulated": True,
-                        "success": True
-                    })
-            return jsonify({
-                "output": "",
-                "simulated": True,
-                "success": True
-            })
-    
-    # Handle rm command
-    elif base_command == "rm":
-        recursive = "-r" in args
-        if recursive:
-            args.remove("-r")
-        if len(args) >= 1:
-            for target in args:
-                if target in command_state['mock_files']:
-                    if command_state['mock_files'][target]['type'] == 'directory' and not recursive:
-                        return jsonify({
-                            "output": f"rm: cannot remove '{target}': Is a directory",
-                            "simulated": True
-                        })
-                    del command_state['mock_files'][target]
-            return jsonify({
-                "output": "",
-                "simulated": True,
-                "success": True
-            })
-    
-    # Handle ls commands
+    # Handle basic ls commands
     elif base_command == "ls":
         if len(args) == 0:
             # Simple ls
@@ -341,14 +280,6 @@ def execute_command():
                 "simulated": True,
                 "success": True
             })
-        elif len(args) == 1 and not args[0].startswith('-'):
-            # ls with directory path
-            if args[0] == "/etc":
-                return jsonify({
-                    "output": "apache2   hostname   passwd   ssh   ...",
-                    "simulated": True,
-                    "success": True
-                })
     
     # Handle pwd command
     elif command == "pwd":
